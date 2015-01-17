@@ -39,22 +39,21 @@ public class GCMNotificationIntentService extends IntentService {
 
         if (!extras.isEmpty()) {
 
-            if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
-                    .equals(messageType)) {
-                Log.v("Send error: ", extras.toString());
-            }
-            else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED
-                    .equals(messageType)) {
-                Log.v("Deleted messages on server:", extras.toString());
-            }
-            else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
-                    .equals(messageType)) {
-                Log.v("Message Received from Google GCM Server:",extras.getString("message"));
-                notification(extras.getString("message"));
+            switch (messageType) {
+                case GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR:
+                    Log.v("Send error: ", extras.toString());
+                    break;
+                case GoogleCloudMessaging.MESSAGE_TYPE_DELETED:
+                    Log.v("Deleted messages on server:", extras.toString());
+                    break;
+                case GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE:
+                    Log.v("Message Received from Google GCM Server:", extras.getString("message"));
+                    notification(extras.getString("message"));
+                    break;
             }
         }
         /**
-         *  Finish the execution from a previous startWakefulService(Context, Intent).
+         *  completeWakefulIntent finishes the execution from a previous startWakefulService(Context, Intent).
          */
         GCMBroadcastReceiver.completeWakefulIntent(intent);
     }
@@ -85,8 +84,9 @@ public class GCMNotificationIntentService extends IntentService {
 
         mNotifyBuilder.setDefaults(defaults);
 
-        // Set autocancel
+        // Enable auto cancel
         mNotifyBuilder.setAutoCancel(true);
+
         // Post a notification
         notificationManager.notify(notifyID, mNotifyBuilder.build());
     }
