@@ -36,7 +36,9 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // If GCMRegID stored in shared prefs is not set
         if (checkSharedPrefs().equals("")) {
+            // Register device for GCM
             new GCMRegistration().execute();
         }
         else{
@@ -44,12 +46,14 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    // Return GCM RegID
     private String checkSharedPrefs() {
 
         SharedPreferences savedValue = this.getSharedPreferences("GCMID", 0);
         return savedValue.getString("ID", "");
     }
 
+    // Save GCM RegID to shared prefs
     private void setSharedPreferences() {
 
         SharedPreferences savedValue = this.getSharedPreferences("GCMID", 0);
@@ -58,6 +62,7 @@ public class MainActivity extends ActionBarActivity {
         editor.apply();
     }
 
+    // Obtain message from edit text and send the message
     public void SendNotification(View view) {
 
         msg = (EditText)findViewById(R.id.notification);
@@ -66,7 +71,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private class SendNotification extends AsyncTask<Void, Void, Void> {
-
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -86,7 +90,7 @@ public class MainActivity extends ActionBarActivity {
                 // the http response
                 HttpResponse httpResponse = httpClient.execute(httpGet);
 
-                // Obtains the message entity of this response
+                // Obtains the message entity of the response
                 httpEntity = httpResponse.getEntity();
 
                 if (httpEntity != null) {
@@ -118,6 +122,7 @@ public class MainActivity extends ActionBarActivity {
                 if(googleCloudMessaging == null){
                   googleCloudMessaging = GoogleCloudMessaging.getInstance(getApplicationContext());
                 }
+                // Registering the device for GCM
                 GCMRegID = googleCloudMessaging.register(getString(R.string.project_number));
 
             }
@@ -131,7 +136,9 @@ public class MainActivity extends ActionBarActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Log.i("--GCM REGISTRATION ID--", GCMRegID);
+            // Saving the GCM RegID
             setSharedPreferences();
+            // Inserting the GCM RegID into the DB
             new InsertRegistrationID().execute(new RegistrationResponse(GCMRegID));
 
         }

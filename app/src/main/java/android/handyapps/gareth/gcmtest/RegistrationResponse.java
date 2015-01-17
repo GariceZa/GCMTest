@@ -49,9 +49,13 @@ public class RegistrationResponse {
 
                 try {
                     String entityResponse = EntityUtils.toString(httpEntity);
+
                     entityResponse = "[" + entityResponse + "]";
+
                     Log.v("entityResponse", entityResponse);
+
                     jsonArray = new JSONArray(entityResponse);
+
                 } catch (IOException e) {
                     Log.v("--IOException--", e.getMessage());
                 } catch (JSONException e) {

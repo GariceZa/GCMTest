@@ -15,13 +15,21 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 /**
  * Created by Gareth on 2015-01-15.
  */
+
+/**
+ * IntentService is a base class for Services that handle asynchronous requests (expressed as Intents) on demand
+ */
 public class GCMNotificationIntentService extends IntentService {
+
     public static final int notifyID = 9001;
 
     public GCMNotificationIntentService() {
         super("GcmIntentService");
     }
 
+    /**
+     * This method is invoked on the worker thread with a request to process
+     */
     @Override
     protected void onHandleIntent(Intent intent) {
         Bundle extras = intent.getExtras();
@@ -30,18 +38,24 @@ public class GCMNotificationIntentService extends IntentService {
         String messageType = gcm.getMessageType(intent);
 
         if (!extras.isEmpty()) {
+
             if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
                     .equals(messageType)) {
                 Log.v("Send error: ", extras.toString());
-            } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED
+            }
+            else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED
                     .equals(messageType)) {
                 Log.v("Deleted messages on server:", extras.toString());
-            } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
+            }
+            else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
                     .equals(messageType)) {
                 Log.v("Message Received from Google GCM Server:",extras.getString("message"));
                 notification(extras.getString("message"));
             }
         }
+        /**
+         *  Finish the execution from a previous startWakefulService(Context, Intent).
+         */
         GCMBroadcastReceiver.completeWakefulIntent(intent);
     }
 
